@@ -15,6 +15,8 @@ type Client interface {
 	// Return the wallet's address.
 	// address - string; The 95-character hex address string of the monero-wallet-rpc in session.
 	GetAddress() (address string, err error)
+	GetSubAddress(label string) (address string, err error)
+	CreateNewAccount(label string) (address string, err error)
 	// GetHeight - Returns the wallet's current block height.
 	// height - unsigned int; The current monero-wallet-rpc's blockchain height.
 	// If the wallet has been offline for a long time, it may need to catch up with the daemon.
@@ -179,6 +181,50 @@ func (c *client) GetAddress() (address string, err error) {
 		return "", err
 	}
 	return jd.Address, nil
+}
+
+// curl -X POST http://127.0.0.1:18083/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"create_address","params":{"account_index":0,"label":"new-sub"}}' -H 'Content-Type: application/json'
+// curl -X POST http://127.0.0.1:18082/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"get_address","params":{"account_index":0,"address_index":[0,1,4]}}' -H 'Content-Type: application/json'
+// curl -X POST http://localhost:18082/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"create_account","params":{"label":"Secondary account"}}' -H 'Content-Type: application/json'
+
+func (c *client) CreateNewAccount(label string) (address string, err error) {
+
+	req := struct {
+		Label string `json:"label"`
+	}{
+		Label: label,
+	}
+
+	jd := struct {
+		Address string `json:"address"`
+	}{}
+	err = c.do("create_account", &req, &jd)
+	if err != nil {
+		return "", err
+	}
+	return jd.Address, nil
+
+}
+
+func (c *client) GetSubAddress(label string) (address string, err error) {
+
+	req := struct {
+		AccountIndex int    `json:"account_index"`
+		Label        string `json:"label"`
+	}{
+		AccountIndex: 0,
+		Label:        label,
+	}
+
+	jd := struct {
+		Address string `json:"address"`
+	}{}
+	err = c.do("create_address", &req, &jd)
+	if err != nil {
+		return "", err
+	}
+	return jd.Address, nil
+
 }
 
 func (c *client) GetHeight() (height uint64, err error) {
