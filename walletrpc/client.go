@@ -44,6 +44,7 @@ type Client interface {
 	GetBulkPayments(paymentids []string, minblockheight uint) (payments []Payment, err error)
 	// Returns a list of transfers.
 	GetTransfers(req GetTransfersRequest) (resp *GetTransfersResponse, err error)
+	GetTransfersWithResAllField(req GetTransfersRequest) (resp *GetTransfersResponseWithAllField, err error)
 	// Show information about a transfer to/from this address.
 	GetTransferByTxID(txid string) (transfer *Transfer, err error)
 	// Return a list of incoming transfers to the wallet.
@@ -156,6 +157,9 @@ func (c *client) do(method string, in, out interface{}) error {
 	// in theory this is only done to catch
 	// any monero related errors if
 	// we are not expecting any data back
+
+	//io.Copy(os.Stdout, resp.Body)
+
 	if out == nil {
 		v := &json2.EmptyResponse{}
 		return json2.DecodeClientResponse(resp.Body, v)
@@ -312,6 +316,12 @@ func (c *client) GetBulkPayments(paymentids []string, minblockheight uint) (paym
 		return nil, err
 	}
 	return jd.Payments, nil
+}
+
+func (c *client) GetTransfersWithResAllField(req GetTransfersRequest) (resp *GetTransfersResponseWithAllField, err error) {
+	resp = &GetTransfersResponseWithAllField{}
+	err = c.do("get_transfers", &req, resp)
+	return
 }
 
 func (c *client) GetTransfers(req GetTransfersRequest) (resp *GetTransfersResponse, err error) {

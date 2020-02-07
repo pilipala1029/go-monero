@@ -103,6 +103,42 @@ func TestGetTransfers(t *testing.T) {
 	}
 }
 
+func TestGetTransfersWithResAllField(t *testing.T) {
+
+	rpccl := New(Config{
+		Address: "http://47.245.28.129:18083/json_rpc",
+	})
+
+	req := GetTransfersRequest{
+		In: true,
+		// Out            bool   `json:"out"`
+		// Pending        bool   `json:"pending"`
+		// Failed         bool   `json:"failed"`
+		// Pool           bool   `json:"pool"`
+		// FilterByHeight bool   `json:"filter_by_height"`
+		// MinHeight      uint64 `json:"min_height"`
+		// MaxHeight      uint64 `json:"max_height"`
+	}
+
+	transfers, err := rpccl.GetTransfersWithResAllField(req)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, v := range transfers.In {
+
+		tranAsJson, err := json.MarshalIndent(v, "", "		")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("trnsfer:  %s \n", tranAsJson)
+
+	}
+}
+
 func TestTransfer(t *testing.T) {
 	rpccl := New(Config{
 		Address: "http://47.245.28.129:18083/json_rpc",
@@ -139,7 +175,7 @@ func TestGetTransferByTxID(t *testing.T) {
 		Address: "http://47.245.28.129:18083/json_rpc",
 	})
 
-	transfer, err := rpccl.GetTransferByTxID("10364eba232b655e82f4e36ce50d99450808eb17efcec7da4e935944a1e5b291")
+	transfer, err := rpccl.GetTransferByTxID("9cd2b232ce7ccb88115f9efed4d1476785bb86153190e1ef7936470ffc93b293")
 	//2e4c2edc783287fcb871fa51beb9d854362d7a97ad7b9c5fd794267a75c3cd1c
 	if err != nil {
 		t.Fatal(err)

@@ -119,6 +119,81 @@ type GetTransfersResponse struct {
 	Pool    []Transfer `json:"pool"`
 }
 
+// address - string; Public address of the transfer.
+// amount - unsigned int; Amount transferred.
+// confirmations - unsigned int; Number of block mined since the block containing this transaction (or block height at which the transaction should be added to a block if not yet confirmed).
+// double_spend_seen - boolean; True if the key image(s) for the transfer have been seen before.
+// fee - unsigned int; Transaction fee for this transfer.
+// height - unsigned int; Height of the first block that confirmed this transfer (0 if not mined yet).
+// note - string; Note about this transfer.
+// payment_id - string; Payment ID for this transfer.
+// subaddr_index - JSON object containing the major & minor subaddress index:
+// major - unsigned int; Account index for the subaddress.
+// minor - unsigned int; Index of the subaddress under the account.
+// suggested_confirmations_threshold - unsigned int; Estimation of the confirmations needed for the transaction to be included in a block.
+// timestamp - unsigned int; POSIX timestamp for when this transfer was first confirmed in a block (or timestamp submission if not mined yet).
+// txid - string; Transaction ID for this transfer.
+// type - string; Transfer type: "in"
+// unlock_time - unsigned int; Number of blocks until transfer is safely spendable.
+
+//
+
+// {
+//       "address": "8C7r63bwDLHJ3pKHzS4WjJiKBPJoFhD21MNroySBJuAzA6tEAHro5QFRWFm53Q9o4yLiSTQmUNuCidHxmMgbhigpJWs2TgJ",
+//       "amount": 100000000,
+//       "confirmations": 24,
+//       "double_spend_seen": false,
+//       "fee": 34490000,
+//       "height": 2028406,
+//       "locked": false,
+//       "note": "",
+//       "payment_id": "0000000000000000",
+//       "subaddr_index": {
+//         "major": 0,
+//         "minor": 9
+//       },
+//       "subaddr_indices": [{
+//         "major": 0,
+//         "minor": 9
+//       }],
+//       "suggested_confirmations_threshold": 1,
+//       "timestamp": 1581080067,
+//       "txid": "9cd2b232ce7ccb88115f9efed4d1476785bb86153190e1ef7936470ffc93b293",
+//       "type": "in",
+//       "unlock_time": 0
+//     }
+
+type SubaddrIndex struct {
+	Major uint64 `json:"major"`
+	Minor uint64 `json:"minor"`
+}
+
+type TransferWithAllField struct {
+	Address                         string       `json:"address"`
+	Amount                          uint64       `json:"amount"`
+	Confirmations                   uint64       `json:"confirmations"`
+	DoubleSpendSeen                 bool         `json:"double_spend_seen"`
+	Fee                             uint64       `json:"fee"`
+	Height                          uint64       `json:"height"`
+	Locked                          bool         `json:"locked"`
+	Note                            string       `json:"note"`
+	PaymentID                       string       `json:"payment_id"`
+	SubaddrIndex                    SubaddrIndex `json:"subaddr_index"`
+	SuggestedConfirmationsThreshold uint64       `json:"suggested_confirmations_threshold"`
+	Timestamp                       uint64       `json:"timestamp"`
+	TxID                            string       `json:"txid"`
+	Type                            string       `json:"type"`
+	UlockTime                       int64        `json:"unlock_time"`
+}
+
+type GetTransfersResponseWithAllField struct {
+	In      []TransferWithAllField `json:"in"`
+	Out     []TransferWithAllField `json:"out"`
+	Pending []TransferWithAllField `json:"pending"`
+	Failed  []TransferWithAllField `json:"failed"`
+	Pool    []TransferWithAllField `json:"pool"`
+}
+
 // Transfer is the transfer data of
 type Transfer struct {
 	TxID         string        `json:"txid"`
