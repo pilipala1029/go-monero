@@ -192,6 +192,29 @@ func TestGetTransferByTxID(t *testing.T) {
 	t.Logf("trnsfer:  %s \n", tranAsJson)
 }
 
+func TestGetTransferWithAllFieldsByTxID(t *testing.T) {
+
+	rpccl := New(Config{
+		Address: "http://47.245.28.129:18083/json_rpc",
+	})
+
+	transfer, err := rpccl.GetTransferWithAllFieldsByTxID("a82195a7480bb6c98966a2fbd74783ed0715302821e7130ce1b700391d241cd8")
+	//2e4c2edc783287fcb871fa51beb9d854362d7a97ad7b9c5fd794267a75c3cd1c
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log("after transfer------------------------")
+
+	tranAsJson, err := json.MarshalIndent(transfer, "", "		")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Logf("trnsfer:  %s \n", tranAsJson)
+}
+
 func TestCreateNewAccount(t *testing.T) {
 	rpccl := New(Config{
 		Address: "http://47.245.28.129:18083/json_rpc",

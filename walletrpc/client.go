@@ -47,6 +47,7 @@ type Client interface {
 	GetTransfersWithResAllField(req GetTransfersRequest) (resp *GetTransfersResponseWithAllField, err error)
 	// Show information about a transfer to/from this address.
 	GetTransferByTxID(txid string) (transfer *Transfer, err error)
+	GetTransferWithAllFieldsByTxID(txid string) (transfer *TransferWithAllField, err error)
 	// Return a list of incoming transfers to the wallet.
 	IncomingTransfers(transfertype GetTransferType) (transfers []IncTransfer, err error)
 	// Return the spend or view private key (or mnemonic seed).
@@ -322,6 +323,25 @@ func (c *client) GetTransfersWithResAllField(req GetTransfersRequest) (resp *Get
 	resp = &GetTransfersResponseWithAllField{}
 	err = c.do("get_transfers", &req, resp)
 	return
+}
+
+func (c *client) GetTransferWithAllFieldsByTxID(txid string) (transfer *TransferWithAllField, err error) {
+
+	jin := struct {
+		TxID string `json:"txid"`
+	}{
+		txid,
+	}
+	jd := struct {
+		Transfer *TransferWithAllField `json:"transfer"`
+	}{}
+	err = c.do("get_transfer_by_txid", &jin, &jd)
+	if err != nil {
+		return
+	}
+	transfer = jd.Transfer
+	return
+
 }
 
 func (c *client) GetTransfers(req GetTransfersRequest) (resp *GetTransfersResponse, err error) {
